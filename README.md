@@ -63,7 +63,18 @@ docker build -t student-task-manager .
 docker run --rm -p 3000:3000 -v task-data:/app/data student-task-manager
 ```
 
-## Cloud deployment
+## Deploy on Render
 
-Push the Practical 4 source to GitHub, create a Docker-based web service from that repository on Render, Azure, AWS, or another compatible host, and select the included `Dockerfile`. The server listens on `0.0.0.0` and uses the host-provided `PORT`. Attach persistent storage at `/app/data` and set `DATA_FILE=/app/data/tasks.json`; a container's temporary filesystem may be cleared during redeployment. Open the host's public URL and verify `/api/health`.
+This project is a Docker web service because Express serves both the website and its REST API.
+
+1. Push this repository to GitHub and sign in to [Render](https://render.com/).
+2. Choose **New + > Web Service**, connect the `student-task-manager` GitHub repository, and select the `main` branch.
+3. Set **Language** to **Docker**. Leave **Root Directory** empty when the `Dockerfile` and `package.json` are at the repository root. If this project is inside a larger repository, set Root Directory to this project's folder (for example, `Practical 4`).
+4. Select a compute plan. The free instance is enough to demonstrate the website, but free instances spin down when idle and do not support persistent disks. Because this app stores tasks in a JSON file, tasks on a free Render instance may be lost after a restart or redeploy.
+5. To preserve tasks on Render, use a paid web service with a persistent disk mounted at `/app/data`, and set the environment variable `DATA_FILE` to `/app/data/tasks.json`.
+6. Create the service. After deployment completes, open its `onrender.com` URL and verify the app and `/api/health` endpoint.
+
+Render can automatically rebuild and redeploy when new commits are pushed to the connected branch. Make code changes locally, commit them, and push to GitHub; the updated site appears after deployment finishes. Changes that have not been pushed are not included in the live site.
+
+For the practical demonstration, show the local Docker container, create and update tasks, then show the Render URL and health endpoint. If deploying on the free plan, mention that cloud file storage is temporary; the local Docker Compose named volume remains persistent on the computer.
 
