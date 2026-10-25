@@ -1,19 +1,102 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f4f0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f4f0">
   <title>StudyFlow | Student Task Manager</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles.css"><script src="/app.js" defer></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
 </head>
-<body><div class="shell">
-  <aside class="sidebar"><a class="brand" href="#"><span class="brand-mark">S</span>studyflow<span class="period">.</span></a><p class="nav-label">WORKSPACE</p><nav><a class="nav-link active" href="#tasks">▦ &nbsp; My tasks <span id="nav-count">0</span></a><a class="nav-link" href="#tasks">◷ &nbsp; Upcoming</a><a class="nav-link" href="#tasks">✓ &nbsp; Completed</a></nav><div class="encouragement"><span>✳</span><h3>One step at a time.</h3><p>Small progress adds up to big things. Keep showing up.</p><small id="progress-label">0% complete</small><div class="track"><i id="progress-bar"></i></div></div><div class="profile"><span class="avatar">S</span><div><b>Student workspace</b><small>Keep learning 🌱</small></div><span class="more">···</span></div></aside>
-  <main class="main"><header class="topbar"><span class="breadcrumb">Workspace <i>/</i> My tasks</span><div><span id="today-label"></span><span class="avatar top-avatar">S</span></div></header>
-    <section class="welcome"><p class="eyebrow">YOUR STUDY SPACE</p><h1>Make room for <em>great things.</em></h1><p class="subhead">A little progress today goes a long way. What are you working on?</p><div class="illustration" aria-hidden="true"><i></i><b>✦</b></div></section>
-    <section class="stats"><article><span class="stat-icon lilac">▤</span><small>Total tasks</small><strong id="total-stat">0</strong><span>in your workspace</span></article><article><span class="stat-icon peach">◷</span><small>Due today</small><strong id="today-stat">0</strong><span>keep your momentum</span></article><article><span class="stat-icon green">✓</span><small>Completed</small><strong id="done-stat">0</strong><span>look at you go!</span></article></section>
-    <section id="tasks"><div class="section-head"><div><p class="eyebrow">YOUR PLAN</p><h2>My tasks <small id="heading-count">0</small></h2></div><button class="primary" id="add-task">＋ &nbsp;Add a task</button></div><div class="toolbar"><div class="filters"><button class="filter active" data-filter="all">All tasks</button><button class="filter" data-filter="active">In progress</button><button class="filter" data-filter="completed">Completed</button></div><label class="search">⌕ <input id="search" type="search" placeholder="Find a task..." aria-label="Find a task"></label></div><div id="task-list" class="task-list" aria-live="polite"></div><div id="empty-state" class="empty" hidden><span>✳</span><h3>You have space to start something.</h3><p>Add a task and make today count.</p><button id="empty-add">＋ Create your first task</button></div></section>
-    <footer>Made for your next big idea <span>♥</span><i>Take it one task at a time.</i></footer>
-  </main></div>
-  <dialog id="task-dialog"><form id="task-form"><header><div><p class="eyebrow">A FRESH START</p><h2 id="dialog-title">Add a task</h2></div><button type="button" class="close" id="close-dialog" aria-label="Close">×</button></header><label for="title">Task name</label><input id="title" name="title" maxlength="120" placeholder="e.g. Review lecture notes" required><label for="description">A few details <span>(optional)</span></label><textarea id="description" name="description" rows="3" maxlength="1000" placeholder="What do you need to remember?"></textarea><div class="fields"><div><label for="dueDate">Due date</label><input id="dueDate" name="dueDate" type="date"></div><div><label for="priority">Priority</label><select id="priority" name="priority"><option value="low">Low key</option><option value="medium" selected>Medium</option><option value="high">High priority</option></select></div></div><p id="form-error" class="error" role="alert"></p><div class="dialog-actions"><button id="cancel-dialog" type="button" class="secondary">Maybe later</button><button id="save-task" class="primary" type="submit">Save task &nbsp;→</button></div></form></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div>
-</body></html>
+
+<body>
+  <div class="shell">
+    <aside class="sidebar"><a class="brand" href="#"><span class="brand-mark">S</span>studyflow<span
+          class="period">.</span></a>
+      <p class="nav-label">WORKSPACE</p>
+      <nav aria-label="Task views"><a class="nav-link active" href="#tasks" data-view="all">▦ &nbsp; My tasks <span id="nav-count">0</span></a><a
+          class="nav-link" href="#tasks" data-view="upcoming">◷ &nbsp; Upcoming</a><a class="nav-link" href="#tasks" data-view="completed">✓ &nbsp; Completed</a>
+      </nav>
+      <div class="encouragement"><span>✳</span>
+        <h3>One step at a time.</h3>
+        <p>Small progress adds up to big things. Keep showing up.</p><small id="progress-label">0% complete</small>
+        <div class="track"><i id="progress-bar"></i></div>
+      </div>
+      <div class="profile"><span class="avatar" aria-label="Shubham Jha">SJ</span>
+        <div><b>Shubham Jha</b><small>Keep learning 🌱</small></div><span class="more" aria-hidden="true">···</span>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><span class="breadcrumb">Workspace <i>/</i> My tasks</span>
+        <div><span id="today-label"></span><span class="avatar top-avatar" aria-label="Shubham Jha">SJ</span></div>
+      </header>
+      <section class="welcome">
+        <p class="eyebrow">SHUBHAM'S STUDY SPACE</p>
+        <h1>Make room for <em>great things.</em></h1>
+        <p class="subhead">A little progress today goes a long way. What are you working on?</p>
+        <div class="illustration" aria-hidden="true"><i></i><b>✦</b></div>
+      </section>
+      <section class="stats">
+        <article><span class="stat-icon lilac">▤</span><small>Total tasks</small><strong
+            id="total-stat">0</strong><span>in your workspace</span></article>
+        <article><span class="stat-icon peach">◷</span><small>Due today</small><strong
+            id="today-stat">0</strong><span>keep your momentum</span></article>
+        <article><span class="stat-icon green">✓</span><small>Completed</small><strong
+            id="done-stat">0</strong><span>look at you go!</span></article>
+      </section>
+      <section id="tasks">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">YOUR PLAN</p>
+            <h2>My tasks <small id="heading-count">0</small></h2>
+          </div><button class="primary" id="add-task">＋ &nbsp;Add a task</button>
+        </div>
+        <div class="toolbar">
+          <div class="filters" role="group" aria-label="Filter tasks"><button class="filter active" data-filter="all">All tasks</button><button class="filter"
+              data-filter="active">In progress</button><button class="filter" data-filter="upcoming">Upcoming</button><button class="filter" data-filter="completed">Completed</button>
+          </div><label class="search">⌕ <input id="search" type="search" placeholder="Find a task..."
+              aria-label="Find a task"></label>
+        </div>
+        <div id="task-list" class="task-list" aria-live="polite"></div>
+        <div id="empty-state" class="empty" hidden><span>✳</span>
+          <h3>You have space to start something.</h3>
+          <p>Add a task and make today count.</p><button id="empty-add">＋ Create your first task</button>
+        </div>
+      </section>
+      <footer>Made for your next big idea <span>♥</span><i>Take it one task at a time.</i></footer>
+    </main>
+  </div>
+  <dialog id="task-dialog">
+    <form id="task-form">
+      <header>
+        <div>
+          <p class="eyebrow">A FRESH START</p>
+          <h2 id="dialog-title">Add a task</h2>
+        </div><button type="button" class="close" id="close-dialog" aria-label="Close">×</button>
+      </header><label for="title">Task name</label><input id="title" name="title" maxlength="120"
+        placeholder="e.g. Review lecture notes" required><label for="description">A few details
+        <span>(optional)</span></label><textarea id="description" name="description" rows="3" maxlength="1000"
+        placeholder="What do you need to remember?"></textarea>
+      <div class="fields">
+        <div><label for="dueDate">Due date</label><input id="dueDate" name="dueDate" type="date"></div>
+        <div><label for="priority">Priority</label><select id="priority" name="priority">
+            <option value="low">Low key</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High priority</option>
+          </select></div>
+      </div>
+      <p id="form-error" class="error" role="alert"></p>
+      <div class="dialog-actions"><button id="cancel-dialog" type="button" class="secondary">Maybe later</button><button
+          id="save-task" class="primary" type="submit">Save task &nbsp;→</button></div>
+    </form>
+  </dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+
+</html>

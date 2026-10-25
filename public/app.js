@@ -1,5 +1,11 @@
 const state = { tasks: [], filter: 'all', query: '', editing: null };
 const $ = (selector) => document.querySelector(selector);
+function localDate(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
 async function api(url, options = {}) {
   const response = await fetch(url, { ...options, headers: { 'Content-Type': 'application/json', ...options.headers } });
   const result = await response.json();
@@ -9,7 +15,7 @@ async function api(url, options = {}) {
 function safe(value = '') { return String(value).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]); }
 function toast(message) { const el = $('#toast'); el.textContent = message; el.classList.add('show'); clearTimeout(toast.timer); toast.timer = setTimeout(() => el.classList.remove('show'), 2400); }
 function render() {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = localDate();
   const done = state.tasks.filter((task) => task.completed).length;
   $('#total-stat').textContent = state.tasks.length;
   $('#today-stat').textContent = state.tasks.filter((task) => !task.completed && task.dueDate === today).length;
@@ -20,12 +26,23 @@ function render() {
   $('#progress-label').textContent = `${progress}% complete`;
   $('#progress-bar').style.width = `${progress}%`;
   const query = state.query.toLowerCase();
-  const tasks = state.tasks.filter((task) => (state.filter === 'all' || (state.filter === 'completed' ? task.completed : !task.completed)) && `${task.title} ${task.description}`.toLowerCase().includes(query));
+  const tasks = state.tasks.filter((task) => {
+    const matchesFilter = state.filter === 'all'
+      || (state.filter === 'completed' && task.completed)
+      || (state.filter === 'active' && !task.completed)
+      || (state.filter === 'upcoming' && !task.completed && task.dueDate && task.dueDate >= today);
+    return matchesFilter && `${task.title} ${task.description}`.toLowerCase().includes(query);
+  });
   $('#task-list').innerHTML = tasks.map((task) => {
     const overdue = task.dueDate && task.dueDate < today && !task.completed;
     const date = task.dueDate ? new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(new Date(`${task.dueDate}T00:00:00`)) : 'No due date';
     return `<article class="task-row ${task.completed ? 'completed' : ''}" data-id="${safe(task.id)}"><button class="check ${task.completed ? 'checked' : ''}" data-action="toggle" aria-label="Toggle completion">${task.completed ? '✓' : ''}</button><div class="task-content"><strong>${safe(task.title)}</strong>${task.description ? `<small>${safe(task.description)}</small>` : ''}</div><div class="task-meta"><span class="due ${overdue ? 'overdue' : ''}">${overdue ? 'Overdue · ' : ''}${date}</span><span class="priority ${safe(task.priority)}">${safe(task.priority)}</span><button class="row-action" data-action="edit" aria-label="Edit">✎</button><button class="row-action delete" data-action="delete" aria-label="Delete">×</button></div></article>`;
   }).join('');
+  const emptyTitle = state.query ? 'No tasks match your search.' : state.filter === 'upcoming' ? 'Nothing upcoming yet.' : 'You have space to start something.';
+  const emptyCopy = state.query ? 'Try another keyword or clear the search.' : state.filter === 'upcoming' ? 'Add a future due date to see a task here.' : 'Add a task and make today count.';
+  $('#empty-state h3').textContent = emptyTitle;
+  $('#empty-state p').textContent = emptyCopy;
+  $('#empty-add').hidden = Boolean(state.query) || state.filter === 'upcoming';
   $('#empty-state').hidden = tasks.length > 0;
 }
 async function refresh() { try { state.tasks = await api('/api/tasks'); render(); } catch (error) { toast(error.message); } }
@@ -52,7 +69,14 @@ $('#task-form').addEventListener('submit', async (event) => {
   try { await api(editing ? `/api/tasks/${editing.id}` : '/api/tasks', { method: editing ? 'PATCH' : 'POST', body: JSON.stringify(data) }); closeDialog(); await refresh(); toast(editing ? 'Task updated.' : 'Task added. You’ve got this!'); }
   catch (error) { $('#form-error').textContent = error.message; }
 });
-$('.filters').addEventListener('click', (event) => { const button = event.target.closest('[data-filter]'); if (!button) return; state.filter = button.dataset.filter; document.querySelectorAll('.filter').forEach((item) => item.classList.toggle('active', item === button)); render(); });
+function setFilter(filter) {
+  state.filter = filter;
+  document.querySelectorAll('.filter').forEach((item) => item.classList.toggle('active', item.dataset.filter === filter));
+  document.querySelectorAll('.nav-link[data-view]').forEach((item) => item.classList.toggle('active', item.dataset.view === filter));
+  render();
+}
+$('.filters').addEventListener('click', (event) => { const button = event.target.closest('[data-filter]'); if (button) setFilter(button.dataset.filter); });
+$('.sidebar nav').addEventListener('click', (event) => { const link = event.target.closest('[data-view]'); if (!link) return; event.preventDefault(); setFilter(link.dataset.view); $('#tasks').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
 $('#search').addEventListener('input', (event) => { state.query = event.target.value; render(); });
 $('#task-list').addEventListener('click', async (event) => {
   const button = event.target.closest('[data-action]'); if (!button) return;
