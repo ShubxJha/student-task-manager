@@ -67,4 +67,3 @@ docker run --rm -p 3000:3000 -v task-data:/app/data student-task-manager
 
 Push the Practical 4 source to GitHub, create a Docker-based web service from that repository on Render, Azure, AWS, or another compatible host, and select the included `Dockerfile`. The server listens on `0.0.0.0` and uses the host-provided `PORT`. Attach persistent storage at `/app/data` and set `DATA_FILE=/app/data/tasks.json`; a container's temporary filesystem may be cleared during redeployment. Open the host's public URL and verify `/api/health`.
 
-Suggested practical demonstration: show the app, add and complete a task, restart the container to demonstrate persisted data, then deploy and check the public health URL. Cloud deployment and public URL verification need the student's own GitHub and hosting accounts.
