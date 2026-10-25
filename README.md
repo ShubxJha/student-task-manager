@@ -2,6 +2,10 @@
 
 A responsive task manager built with Node.js and Express. Tasks are persisted to a JSON file; the included Compose named volume keeps them across container restarts.
 
+## Application screenshot
+
+![StudyFlow student task manager dashboard](docs/screenshots/task-manager-dashboard.png)
+
 ## Run locally
 
 Requires Node.js 20 or newer.
